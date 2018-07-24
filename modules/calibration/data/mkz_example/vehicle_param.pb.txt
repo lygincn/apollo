@@ -4,7 +4,7 @@ vehicle_param {
   left_edge_to_center: 1.055
   right_edge_to_center: 1.055
 
-  length: 4.933
+  length: 10
   width: 2.11
   height: 1.48
   min_turn_radius: 5.05386147161
