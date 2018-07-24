@@ -5,7 +5,7 @@ vehicle_param {
   right_edge_to_center: 1.055
 
   length: 10
-  width: 2.11
+  width: 10
   height: 1.48
   min_turn_radius: 5.05386147161
   max_acceleration: 2.0
