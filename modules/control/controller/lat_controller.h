@@ -147,7 +147,7 @@ class LatController : public Controller {
   // rotational inertia
   double iz_ = 0.0;
   // the ratio between the turn of the steering wheel and the turn of the wheels
-  double steer_transmission_ratio_ = 0.0;
+  double steer_ratio_ = 0.0;
   // the maximum turn of steer
   double steer_single_direction_max_degree_ = 0.0;
 
@@ -204,6 +204,8 @@ class LatController : public Controller {
 
   const std::string name_;
 
+  double query_relative_time_;
+
   double pre_steer_angle_ = 0.0;
 
   double minimum_speed_protection_ = 0.1;
@@ -215,6 +217,8 @@ class LatController : public Controller {
   double init_vehicle_y_ = 0.0;
 
   double init_vehicle_heading_ = 0.0;
+
+  double min_turn_radius_ = 0.0;
 };
 
 }  // namespace control

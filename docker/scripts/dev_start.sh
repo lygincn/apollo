@@ -20,7 +20,7 @@ INCHINA="no"
 LOCAL_IMAGE="no"
 VERSION=""
 ARCH=$(uname -m)
-VERSION_X86_64="dev-x86_64-20180702_1140"
+VERSION_X86_64="dev-x86_64-20180906_2002"
 VERSION_AARCH64="dev-aarch64-20170927_1111"
 VERSION_OPT=""
 
@@ -173,10 +173,6 @@ if [ "$LOCAL_IMAGE" == "yes" ] && [ -z "$VERSION_OPT" ]; then
     VERSION="local_dev"
 fi
 
-# Included default maps.
-for map_name in ${DEFAULT_MAPS[@]}; do
-    source ${APOLLO_ROOT_DIR}/docker/scripts/restart_map_volume.sh ${map_name} "${VOLUME_VERSION}"
-done
 
 IMG=${DOCKER_REPO}:$VERSION
 
@@ -217,8 +213,14 @@ function main(){
     docker ps -a --format "{{.Names}}" | grep 'apollo_dev' 1>/dev/null
     if [ $? == 0 ]; then
         docker stop apollo_dev 1>/dev/null
-        docker rm -f apollo_dev 1>/dev/null
+        docker rm -v -f apollo_dev 1>/dev/null
     fi
+
+    # Included default maps.
+    for map_name in ${DEFAULT_MAPS[@]}; do
+      source ${APOLLO_ROOT_DIR}/docker/scripts/restart_map_volume.sh ${map_name} "${VOLUME_VERSION}"
+    done
+
     local display=""
     if [[ -z ${DISPLAY} ]];then
         display=":0"
@@ -255,7 +257,13 @@ function main(){
     docker run -it -d --rm --name ${YOLO3D_VOLUME} ${YOLO3D_VOLUME_IMAGE}
 
     info "Starting docker container \"apollo_dev\" ..."
-    docker run -it \
+
+    DOCKER_CMD="nvidia-docker"
+    if ! [ -x "$(command -v ${DOCKER_CMD})" ]; then
+        DOCKER_CMD="docker"
+    fi
+
+    ${DOCKER_CMD} run -it \
         -d \
         --privileged \
         --name apollo_dev \
@@ -277,6 +285,7 @@ function main(){
         --hostname in_dev_docker \
         --shm-size 2G \
         --pid=host \
+        -v /dev/null:/dev/raw1394 \
         $IMG \
         /bin/bash
 
